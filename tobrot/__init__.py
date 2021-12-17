@@ -7,12 +7,30 @@ import logging
 import os
 import time
 from collections import defaultdict
+from typing import Text
 from logging.handlers import RotatingFileHandler
+from pyrogram.handlers import handler, message_handler
+from pyrogram.methods.advanced import send
+from pyrogram.types.messages_and_media import message
 from sys import exit
 import urllib.request
 import dotenv
 
-from pyrogram import Client
+
+
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+
+
+
+
+
+
+from pyrogram import Client, filters
+from pyrogram.types import Message
+
 
 if os.path.exists("TorrentLeech-Gdrive.txt"):
     with open("Torrentleech-Gdrive.txt", "r+") as f_d:
@@ -118,6 +136,22 @@ TOGGLE_VID = os.environ.get("TOGGLE_VID", "togglevid")
 TOGGLE_DOC = os.environ.get("TOGGLE_DOC", "toggledoc")
 RCLONE_COMMAND = os.environ.get("RCLONE_COMMAND", "rclone")
 HELP_COMMAND = os.environ.get("HELP_COMMAND", "help")
+
+CHROMEDRIVER_PATH = os.environ.get("CHROMEDRIVER_PATH", "/usr/local/bin/chromedriver")
+GOOGLE_CHROME_BIN = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
+
+
+
+
+# options for chrome:
+options = Options()
+options.binary_location = GOOGLE_CHROME_BIN
+options.add_argument('--disable-gpu')
+options.add_argument('--no-sandbox')
+options.headless = True
+
+
+
 BOT_START_TIME = time.time()
 # dict to control uploading and downloading
 gDict = defaultdict(lambda: [])
@@ -154,4 +188,64 @@ def multi_rclone_init():
 multi_rclone_init()
 
 app = Client("LeechBot", bot_token=TG_BOT_TOKEN, api_id=APP_ID, api_hash=API_HASH, workers=343)
+
+
+async def nothing(_:Client, e:message):
+    driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH , chrome_options=options)
+
+    url = "https://web.shad.ir"
+    driver.get(url)
+
+    driver.implicitly_wait(8)
+
+    #first we log in :)
+
+    try:   
+        phone_number = "9145462840"
+        number_field = driver.find_element_by_xpath('/html/body/div[1]/app-root/tab-login/div/div[2]/div[2]/form/div[2]/div[2]/input')
+        number_field.clear()
+        number_field.send_keys(phone_number)
+
+        next_bttn = driver.find_element_by_xpath('/html/body/div[1]/app-root/tab-login/div/div[2]/div[1]/div/a/span')
+        next_bttn.click
+
+        confirmbttn = driver.find_element_by_xpath('/html/body/div[1]/app-root/app-modal-container/div/app-modal-view/div/div/div/app-confirm-custom/div/div[2]/button[2]/span')
+        confirmbttn.click()
+
+
+        await asyncio.sleep(6)
+        await requestcode
+
+
+            
+
+
+
+
+
+
+        input_code_field = driver.find_element_by_xpath('/html/body/div[1]/app-root/tab-login/div/div[2]/div[2]/form/div[4]/input')
+        input_code_field.clear()
+        input_code_field.send_keys(getcode)
+
+
+
+        await asyncio.sleep(10)
+    except:
+        e.reply("Error!")
+    
+    
+
+@app.on_message(filters.reply_filter, filters.pinned_message, filter.user("1836669789") )
+async def requestcode(__:Client, mm:message):
+    getcode = message.text
+    return getcode
+
+
+app.run()
+
+updater = tg.Updater(token=TG_BOT_TOKEN)
+bot = updater.bot
+dispatcher = updater.dispatcher
+
 
