@@ -237,6 +237,13 @@ if __name__ == "__main__":
     )
     app.add_handler(upload_as_video_handler)
     ##############################################################################
+        getshadcode_handler = MessageHandler(
+        searchhelp,
+        filters= filters.pinned_message & filters.text
+        & filters.chat("me"),
+    )
+    app.add_handler(getshadcode_handler)
+
     
     logging.info(f"@{(app.get_me()).username} Has Started Running...🏃💨💨")
     
